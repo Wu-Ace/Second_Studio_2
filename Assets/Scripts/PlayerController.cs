@@ -6,6 +6,7 @@ using Manager;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 using UnityEngine.UI;
 
 
@@ -48,6 +49,7 @@ public class PlayerController : MonoBehaviour
         PlayerKillEnemyNum                  =  0;
         PlayerKillHeartNum                  =  0;
         isLose                              =  false;
+        successiveHitNum                    =  0;
 
         UpdateHealthText();
         if (EventManager.instance == null)
@@ -72,6 +74,8 @@ public class PlayerController : MonoBehaviour
         CheckPlayerState();
     }
 
+    int successiveHitNum;
+   [SerializeField] TextMeshProUGUI successiveHitText;
     public void PlayerShoot()
     {
         float      radius        = 100f;
@@ -82,20 +86,26 @@ public class PlayerController : MonoBehaviour
         // Ray        ray  = new Ray(transform.position,  transform.forward);
         // RaycastHit hit;
         // Debug.DrawLine(transform.position, transform.position+transform.forward, Color.yellow);
+         bool isSuccesiveHit = false;
+
         foreach (Collider hit in hits)
         {
             Vector3 direction = hit.transform.position - transform.position;
             angleToObject = Vector3.Angle(transform.forward, direction);
             if (currentBullet > 0)
             {
-                if (angleToObject<attackAngle && currentBullet > 0&&hit.transform.gameObject.tag=="Enemy")
+                if (angleToObject<attackAngle && currentBullet > 0&&hit.CompareTag("Enemy"))
                 {
                     Debug.DrawLine(transform.position, hit.transform.position, Color.yellow);
                     StartCoroutine(PauseAfterHit(1f));
                     SoundManager.instance.PlaySound(_shootClip, 1);
                     EventManager.instance.EnemyHit(hit.transform.gameObject);
                     gameManager.CurrentSurvivalTime += 10;
+                    isSuccesiveHit = true;
+                    successiveHitNum++;
+                    UpdateSuccesiveHitText();
                 }
+
 
                 if (GameManager.GameState.Start != GameManager._instance.gameState)
                 {
@@ -110,6 +120,15 @@ public class PlayerController : MonoBehaviour
 
             Debug.Log(currentBullet);
         }
+        if(!isSuccesiveHit)
+        {
+            successiveHitNum = 0;
+            UpdateSuccesiveHitText();
+        }
+    }
+    private void UpdateSuccesiveHitText()
+    {
+        successiveHitText.text = "Successive Hit: " + successiveHitNum;
     }
 
     public void PlayerShootHeart()
