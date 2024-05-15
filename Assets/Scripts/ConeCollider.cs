@@ -1,9 +1,13 @@
 using System.Collections;
+using System.Collections.Generic;
+
 using UnityEngine;
 using System;
 using Lofelt.NiceVibrations;
 using Manager;
-public class ConeCast : MonoBehaviour {
+using Random = System.Random;
+
+public class ConeCollider : MonoBehaviour {
     public float radius;
     public float SlowAngle;
     public float FastAngle;
@@ -19,23 +23,41 @@ public class ConeCast : MonoBehaviour {
         bool hapticsSupported = DeviceCapabilities.isVersionSupported;
         StartCoroutine(DetectSound());
     }
+    [SerializeField] private AudioClip normalEnemyClip1;
+    [SerializeField] private AudioClip shootToMoveEnemyClip1;
+    public class Enemy
+    {
+        public Collider collider;
+        public bool     isSoundPlayed;
 
+        public Enemy(Collider collider)
+        {
+            this.collider      = collider;
+            this.isSoundPlayed = false;
+        }
+    }
     IEnumerator DetectSound() {
-        float volume        = 0;
-        float angleToObject = 180;
-        float waitTime      = 0;
+        float       volume        = 0;
+        float       angleToObject = 180;
+        float       waitTime      = 0;
+        List<Enemy> enemies       = new List<Enemy>();
         while(true){
             Collider[] hits = Physics.OverlapSphere(transform.position, radius, enemyLayerMask);
 
 
             foreach (Collider hit in hits)
             {
-
+                    Enemy enemy = enemies.Find(e => e.collider == hit);
+                    if (enemy == null)
+                    {
+                       enemy = new Enemy(hit);
+                       enemies.Add(enemy);
+                     }
                     Vector3 direction        = hit.transform.position - transform.position;
                     float   distanceToObject = direction.magnitude;
                     direction     = direction.normalized;
                     angleToObject = Vector3.Angle(transform.forward, direction);
-                    if (hit.tag == "Heart")
+                    if (hit.CompareTag("Heart"))
                     {
                         if (angleToObject <= FastAngle)
                         {
@@ -43,7 +65,7 @@ public class ConeCast : MonoBehaviour {
                             volume   = 1 - 0.01f;
                             waitTime = 0f;
                             // Debug.Log(volume);
-                            SoundManager.instance.PlaySound(_keepClip, volume);
+                            SoundManager.instance.PlayEnemySound(_keepClip, volume);
                         }
                         else if (angleToObject >= FastAngle && angleToObject <= SlowAngle)
                         {
@@ -51,12 +73,12 @@ public class ConeCast : MonoBehaviour {
                             volume   = Mathf.InverseLerp(radius, 0, distanceToObject);
                             waitTime = angleToObject / SlowAngle;
                             // Debug.Log(volume);
-                            SoundManager.instance.PlaySound(_radarClip, volume);
+                            SoundManager.instance.PlayEnemySound(_radarClip, volume);
 
                         }
                     }
 
-                    if (hit.tag == "Enemy")
+                    if (hit.CompareTag("Enemy"))
                     {
                         if (angleToObject <= SlowAngle)
                         {
@@ -67,6 +89,34 @@ public class ConeCast : MonoBehaviour {
                             // SoundManager.instance.PlaySound(_keepClip, volume);
                             HapticPatterns.PlayEmphasis(volume, 0.0f);                            // SoundManager.instance.PlaySound(_radarClip, volume);
                         }
+                        if (angleToObject<=FastAngle)
+                        {
+                            if (hit.name == "NormalEnemy(Clone)") // Add this line
+                            {
+                                if (!enemy.isSoundPlayed)
+                                {
+                                    SoundManager.instance.PlayEnemySound(normalEnemyClip1, 1);
+                                    enemy.isSoundPlayed = true;
+                                } // Add this line
+                            }
+
+                            if (hit.name == "ShootToMoveEnemy(Clone)")
+                            {
+                                if (!enemy.isSoundPlayed)
+                                {
+                                    SoundManager.instance.PlayEnemySound(shootToMoveEnemyClip1, 1);
+                                    enemy.isSoundPlayed = true;
+                                }
+                            }
+                            {
+
+                            }
+                        }
+                        else
+                        {
+                            enemy.isSoundPlayed = false;
+                        }
+
                     }
 
             }
@@ -100,7 +150,7 @@ public class ConeCast : MonoBehaviour {
     private IEnumerator PlayNextSound(AudioClip clip, float volume, float waitTime) {
         isWaiting = true; // 设置等待标志为true
         HapticPatterns.PlayEmphasis(volume, 0.0f);
-        SoundManager.instance.PlaySound(clip, volume);
+        SoundManager.instance.PlayEnemySound(clip, volume);
         yield return new WaitForSeconds(waitTime);
         isWaiting = false; // 等待结束后，重置等待标志为false
     }

@@ -53,7 +53,7 @@ public class EnemyController : MonoBehaviour
         if (enemy == this.gameObject)
         {
             PlayerController.PlayerKillEnemyNum++;
-            SoundManager.instance.PlaySound(DefeatedClip, 0.5f);
+            SoundManager.instance.PlayEnemySound(DefeatedClip, 0.5f);
             Debug.Log("EnemyController:EnemyBeingHurt");
             Debug.Log("Enemy is being hurt");
             EnemySpawner.EnemyNumber--;

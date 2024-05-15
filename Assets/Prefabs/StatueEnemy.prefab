@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3604179745590071464
+--- !u!1 &2438247672057756397
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,48 +8,48 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3669716658386304000}
-  - component: {fileID: 1122406495937830664}
-  - component: {fileID: 4205758446735307441}
-  - component: {fileID: 2879796245736670148}
-  - component: {fileID: 2950458903468398888}
+  - component: {fileID: 7421863225564379522}
+  - component: {fileID: 8728694508853766963}
+  - component: {fileID: 6470757498667306427}
+  - component: {fileID: 4244083989353222074}
+  - component: {fileID: 3883033917770437868}
   m_Layer: 3
-  m_Name: ShootToMoveEnemy
+  m_Name: StatueEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3669716658386304000
+--- !u!4 &7421863225564379522
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3604179745590071464}
+  m_GameObject: {fileID: 2438247672057756397}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.302145, y: -3.6446202, z: 5.691797}
-  m_LocalScale: {x: 6, y: 6, z: 6}
-  m_ConstrainProportionsScale: 1
+  m_LocalPosition: {x: 1.21, y: -0.12, z: 1.88}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &1122406495937830664
+--- !u!33 &8728694508853766963
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3604179745590071464}
+  m_GameObject: {fileID: 2438247672057756397}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &4205758446735307441
+--- !u!23 &6470757498667306427
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3604179745590071464}
+  m_GameObject: {fileID: 2438247672057756397}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9ab4ca58a6d13644c9f98f61078f7113, type: 2}
+  - {fileID: 2100000, guid: cd77c59f68f944941b9d6fc8f019a9ad, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -85,30 +85,13 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &2879796245736670148
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3604179745590071464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b36ce465e1cf7364b859b2d5866aa20f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 0}
-  defeatedClip: {fileID: 8300000, guid: c22704a0b40f3224d93b53927f3785b9, type: 3}
-  health: 3
-  moveDistance: 5
-  moveClip: {fileID: 8300000, guid: a4171fde55e85e74da1c46296256f0d2, type: 3}
---- !u!65 &2950458903468398888
+--- !u!65 &4244083989353222074
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3604179745590071464}
+  m_GameObject: {fileID: 2438247672057756397}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -123,3 +106,25 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3883033917770437868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2438247672057756397}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccf822ed11cf22b45b82c7d195ee099f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemySpawner: {fileID: 0}
+  playerController: {fileID: 0}
+  coneCollider: {fileID: 0}
+  player: {fileID: 0}
+  speed: 4.55
+  defeatedClip: {fileID: 0}
+  playerHurtClip: {fileID: 0}
+  playerLayerMask:
+    serializedVersion: 2
+    m_Bits: 1

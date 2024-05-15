@@ -8,7 +8,7 @@ public class SoundManager : MonoBehaviour
     // Start is called before the first frame update
     public static SoundManager instance;
 
-    [SerializeField] private AudioSource _musicSource, _sfxSource;
+    [SerializeField] private AudioSource _musicSource, _playerSfxSource, enemySfxSource;
     private void Awake()
     {
         if (instance !=  null)
@@ -16,20 +16,25 @@ public class SoundManager : MonoBehaviour
             Destroy(this);
         }
         instance                           =  this;
-        EventManager.instance.onPlaySound  += PlaySound;
-        EventManager.instance.onPlayerDie  += PlaySound;
-        EventManager.instance.onPlayerHurt += PlaySound;
-        EventManager.instance.onPlayerWin += PlaySound;
+        EventManager.instance.onPlaySound  += PlayPlayerSound;
+        EventManager.instance.onPlayerDie  += PlayPlayerSound;
+        EventManager.instance.onPlayerHurt += PlayPlayerSound;
+        EventManager.instance.onPlayerWin  += PlayPlayerSound;
     }
-    public void PlaySound(AudioClip clip, float volume)
+    public void PlayPlayerSound(AudioClip clip, float volume)
     {
         // _sfxSource.pitch = pitch;
-        _sfxSource.PlayOneShot(clip, volume);
+        _playerSfxSource.PlayOneShot(clip, volume);
+    }
+    public void PlayEnemySound(AudioClip clip, float volume)
+    {
+        // _sfxSource.pitch = pitch;
+        enemySfxSource.PlayOneShot(clip, volume);
     }
 
     public void PlayerDie(AudioClip clip, float volume)
     {
-        _sfxSource.PlayOneShot(clip, volume);
+        _playerSfxSource.PlayOneShot(clip, volume);
     }
 
 

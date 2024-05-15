@@ -22,7 +22,7 @@ public class HeartController : MonoBehaviour
     {
         if (heart == this.gameObject)
         {
-            SoundManager.instance.PlaySound(_heartClip, 0.5f);
+            SoundManager.instance.PlayEnemySound(_heartClip, 0.5f);
             Destroy(this.gameObject);
         }
     }

@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip         _dieClip;
     private                  AndroidJavaObject vibrator;
 
-    public  ConeCast     ConeCollider;
+    public  ConeCollider     ConeCollider;
     private GameObject   heartGameObject;
     public  HeartSpawner _heartSpawner;
     public  GameManager  gameManager;
@@ -94,11 +94,12 @@ public class PlayerController : MonoBehaviour
             angleToObject = Vector3.Angle(transform.forward, direction);
             if (currentBullet > 0)
             {
+                SoundManager.instance.PlayPlayerSound(_shootClip, 1);
+                currentBullet--;
                 if (angleToObject<attackAngle && currentBullet > 0&&hit.CompareTag("Enemy"))
                 {
                     Debug.DrawLine(transform.position, hit.transform.position, Color.yellow);
                     StartCoroutine(PauseAfterHit(1f));
-                    SoundManager.instance.PlaySound(_shootClip, 1);
                     EventManager.instance.EnemyHit(hit.transform.gameObject);
                     gameManager.CurrentSurvivalTime += 10;
                     isSuccesiveHit = true;
@@ -115,7 +116,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                EventManager.instance.PlaySound(_emptyClip, 1);
+                SoundManager.instance.PlayPlayerSound(_emptyClip, 1);
             }
 
             Debug.Log(currentBullet);
@@ -193,7 +194,7 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Reload");
             currentBullet = bulletMag;
-            EventManager.instance.PlaySound(_reloadClip, 1);
+            SoundManager.instance.PlayPlayerSound(_reloadClip, 1);
         }
     }
 

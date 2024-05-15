@@ -41,7 +41,7 @@ public class ShootToMoveEnemyController : MonoBehaviour
             if (health == 0)
             {
                 playerController.PlayerKillEnemyNum++;
-                SoundManager.instance.PlaySound(defeatedClip, 0.5f);
+                SoundManager.instance.PlayEnemySound(defeatedClip, 0.5f);
                 Debug.Log("EnemyController:EnemyBeingHurt");
                 Debug.Log("Enemy is being hurt");
                 enemySpawner.EnemyNumber--;
@@ -61,6 +61,17 @@ public class ShootToMoveEnemyController : MonoBehaviour
         Debug.Log(volume);
         transform.position = Vector3.MoveTowards(transform.position, player.position, moveDistance);
         EventManager.instance.PlaySound(moveClip, volume);
+    }
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.tag == "Player")
+        {
+            playerController.Health--;
+            enemySpawner.EnemyNumber--;
+            Debug.Log("Player Health: " + playerController.Health);
+            // EventManager.instance.PlayerHurt(playerHurtClip,1);
+            Destroy(this.gameObject);
+        }
     }
 
     private void OnDestroy()

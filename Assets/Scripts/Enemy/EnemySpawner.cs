@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public  GameObject enemyPrefab;
-    public  float      spawnRadius  ;
-    public  float      minSpawnTime ;
-    public  float      maxSpawnTime ;
-    private float      EnemyMaxNumber;
-    public  float      EnemyNumber;
-    public  int        EnemyTrueMaxNumber;
+    public  GameObject[] enemyPrefabs;
+    public float spawnRadius  ;
+    public  float        minSpawnTime ;
+    public  float        maxSpawnTime ;
+    private float        EnemyMaxNumber;
+    public  float        EnemyNumber;
+    public  int          EnemyTrueMaxNumber;
 
 
     private float nextSpawnTime;
@@ -78,7 +78,7 @@ public class EnemySpawner : MonoBehaviour
         {
             spawnPosition = transform.position + Random.onUnitSphere * spawnRadius;
         }
-
+        GameObject enemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
 
         // 生成敌人
         Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
