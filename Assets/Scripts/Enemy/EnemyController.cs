@@ -50,6 +50,7 @@ public class EnemyController : MonoBehaviour
 
     private void EnemyBeingHurt(GameObject enemy)
     {
+        Debug.Log("EnemyController:EnemyBeingHurt");
         if (enemy == this.gameObject)
         {
             PlayerController.PlayerKillEnemyNum++;

@@ -98,8 +98,9 @@ public class PlayerController : MonoBehaviour
                 currentBullet--;
                 if (angleToObject<attackAngle && currentBullet > 0&&hit.CompareTag("Enemy"))
                 {
+                    Debug.Log("Hit");
                     Debug.DrawLine(transform.position, hit.transform.position, Color.yellow);
-                    StartCoroutine(PauseAfterHit(1f));
+                    // StartCoroutine(PauseAfterHit(1f));
                     EventManager.instance.EnemyHit(hit.transform.gameObject);
                     gameManager.CurrentSurvivalTime += 10;
                     isSuccesiveHit = true;

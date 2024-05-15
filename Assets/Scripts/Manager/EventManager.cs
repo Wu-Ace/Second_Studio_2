@@ -47,7 +47,6 @@ namespace Manager
             {
                 onPlayerShoot();
             }
-            Debug.Log("EventManager:PlayerShoot");
         }
 
         public event Action                   onPlayerPress;

@@ -58,7 +58,6 @@ public class ShootToMoveEnemyController : MonoBehaviour
         float volume;
         distanceToPlayer   = Vector3.Distance(transform.position, player.position);
         volume             = 1 / Mathf.Pow(20, distanceToPlayer/ enemySpawner.spawnRadius);
-        Debug.Log(volume);
         transform.position = Vector3.MoveTowards(transform.position, player.position, moveDistance);
         EventManager.instance.PlaySound(moveClip, volume);
     }

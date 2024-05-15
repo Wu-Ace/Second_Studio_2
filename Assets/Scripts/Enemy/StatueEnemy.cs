@@ -8,7 +8,7 @@ public class StatueEnemy : MonoBehaviour
 {
     [SerializeField] EnemySpawner     enemySpawner;
     [SerializeField] PlayerController playerController;
-    [SerializeField] ConeCollider                      coneCollider;
+    [SerializeField] ConeCollider     coneCollider;
 
     private float stopMovingAngle;
     private Coroutine detectPlayerCoroutine;

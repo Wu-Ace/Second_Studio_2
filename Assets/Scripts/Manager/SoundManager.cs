@@ -36,6 +36,13 @@ public class SoundManager : MonoBehaviour
     {
         _playerSfxSource.PlayOneShot(clip, volume);
     }
-
+    public void PlayMusic(AudioClip clip, float volume)
+    {
+        _musicSource.PlayOneShot(clip, volume);
+    }
+    public void StopMusic()
+    {
+        _musicSource.Stop();
+    }
 
 }
