@@ -8,13 +8,14 @@ using Manager;
 using Random = System.Random;
 
 public class ConeCollider : MonoBehaviour {
-    public float radius;
-    public float SlowAngle;
-    public float FastAngle;
-    public float warmRadius;
-    public LayerMask enemyLayerMask; // 用于过滤敌人的LayerMask
+    public                   float     radius;
+    public                   float     SlowAngle;
+    public                   float     FastAngle;
+    public                   float     warmRadius;
+    public                   LayerMask enemyLayerMask; // 用于过滤敌人的LayerMask
     [SerializeField] private AudioClip _radarClip;
     [SerializeField] private AudioClip _keepClip;
+    public                   Sonar     sonar;
 
     private bool isWaiting = false; // 新增一个标志来表示是否在等待中
 
@@ -25,6 +26,8 @@ public class ConeCollider : MonoBehaviour {
     }
     [SerializeField] private AudioClip normalEnemyClip1;
     [SerializeField] private AudioClip shootToMoveEnemyClip1;
+    [SerializeField] private AudioClip statueEnemyClip1;
+    [SerializeField] private AudioClip musicEnemyClip1;
     public class Enemy
     {
         public Collider collider;
@@ -36,6 +39,9 @@ public class ConeCollider : MonoBehaviour {
             this.isSoundPlayed = false;
         }
     }
+
+    public GameObject NormalEnemyUI;
+    public GameObject StaticEnemyUI;
     IEnumerator DetectSound() {
         float       volume        = 0;
         float       angleToObject = 180;
@@ -87,7 +93,9 @@ public class ConeCollider : MonoBehaviour {
                             waitTime = angleToObject / SlowAngle;
                             Debug.Log(volume);
                             // SoundManager.instance.PlaySound(_keepClip, volume);
-                            HapticPatterns.PlayEmphasis(volume, 0.0f);                            // SoundManager.instance.PlaySound(_radarClip, volume);
+                            sonar.StartSonar();
+                            HapticPatterns.PlayEmphasis(volume, 0.0f); // SoundManager.instance.PlaySound(_radarClip, volume);
+
                         }
                         if (angleToObject<=FastAngle)
                         {
@@ -98,23 +106,66 @@ public class ConeCollider : MonoBehaviour {
                                     SoundManager.instance.PlayEnemySound(normalEnemyClip1, 1);
                                     enemy.isSoundPlayed = true;
                                 } // Add this line
+                                NormalEnemyUI.SetActive(true);
+                                StaticEnemyUI.SetActive(false);
                             }
-
-                            if (hit.name == "ShootToMoveEnemy(Clone)")
+                            else if(hit.name == "ShootToMoveEnemy(Clone)")
                             {
                                 if (!enemy.isSoundPlayed)
                                 {
                                     SoundManager.instance.PlayEnemySound(shootToMoveEnemyClip1, 1);
                                     enemy.isSoundPlayed = true;
                                 }
+                                NormalEnemyUI.SetActive(false);
+                                StaticEnemyUI.SetActive(false);
+
                             }
+                            else if(hit.name == "StatueEnemy(Clone)")
                             {
+                                if (!enemy.isSoundPlayed)
+                                {
+                                    SoundManager.instance.PlayEnemySound(shootToMoveEnemyClip1, 1);
+                                    enemy.isSoundPlayed = true;
+                                }
+                                NormalEnemyUI.SetActive(false);
+                                StaticEnemyUI.SetActive(false);
+
+                            }
+                            else if(hit.name == "MusicEnemy(Clone)")
+                            {
+                                if (!enemy.isSoundPlayed)
+                                {
+                                    SoundManager.instance.PlayEnemySound(shootToMoveEnemyClip1, 1);
+                                    enemy.isSoundPlayed = true;
+                                }
+                                NormalEnemyUI.SetActive(false);
+                                StaticEnemyUI.SetActive(false);
+
+                            }
+                            else if (hit.name == "StaticEnemy(Clone)")
+                            {
+                                if (!enemy.isSoundPlayed)
+                                {
+                                    SoundManager.instance.PlayEnemySound(shootToMoveEnemyClip1, 1);
+                                    enemy.isSoundPlayed = true;
+                                }
+                                NormalEnemyUI.SetActive(false);
+                                StaticEnemyUI.SetActive(true);
+                            }
+                            else
+                            {
+                                enemy.isSoundPlayed = false;
+                                NormalEnemyUI.SetActive(false);
+                                StaticEnemyUI.SetActive(false);
+
 
                             }
                         }
                         else
                         {
                             enemy.isSoundPlayed = false;
+                            NormalEnemyUI.SetActive(false);
+                            StaticEnemyUI.SetActive(false);
                         }
 
                     }

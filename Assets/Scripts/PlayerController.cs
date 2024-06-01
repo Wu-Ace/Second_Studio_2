@@ -102,16 +102,20 @@ public class PlayerController : MonoBehaviour
                     Debug.DrawLine(transform.position, hit.transform.position, Color.yellow);
                     // StartCoroutine(PauseAfterHit(1f));
                     EventManager.instance.EnemyHit(hit.transform.gameObject);
-                    gameManager.CurrentSurvivalTime += 10;
+                    // gameManager.CurrentSurvivalTime += 10;
                     isSuccesiveHit = true;
                     successiveHitNum++;
                     UpdateSuccesiveHitText();
+                    if (hit.name == "Enemy(Clone)")
+                    {
+                        PlayerKillEnemyNum++;
+                    }
                 }
 
 
                 if (GameManager.GameState.Start != GameManager._instance.gameState)
                 {
-                    gameManager.CurrentSurvivalTime -= 5;
+                    // gameManager.CurrentSurvivalTime -= 5;
                     // Debug.Log("-5 second");
                 }
             }
@@ -120,7 +124,6 @@ public class PlayerController : MonoBehaviour
                 SoundManager.instance.PlayPlayerSound(_emptyClip, 1);
             }
 
-            Debug.Log(currentBullet);
         }
         if(!isSuccesiveHit)
         {
@@ -130,9 +133,9 @@ public class PlayerController : MonoBehaviour
     }
     private void UpdateSuccesiveHitText()
     {
-        successiveHitText.text = "Successive Hit: " + successiveHitNum;
+        successiveHitText.text = "连击数: " + successiveHitNum;
     }
-
+    [SerializeField]AudioClip absorbClip;
     public void PlayerShootHeart()
     {
         float      radius        = 100f;
@@ -149,6 +152,7 @@ public class PlayerController : MonoBehaviour
 
                     Debug.DrawLine(transform.position, hit.transform.position, Color.yellow);
                     isShootingHeart = true;
+                    SoundManager.instance.PlayPlayerSound(absorbClip, 1);
                     if (shootHeartTimer >= shootHeartTime)
                     {
                         Health++;
@@ -156,9 +160,10 @@ public class PlayerController : MonoBehaviour
                         EventManager.instance.HeartHit(hit.transform.gameObject);
                         shootHeartTimer                 =  0f;
                         isShootingHeart                 =  false;
-                        gameManager.CurrentSurvivalTime += 20;
+                        // gameManager.CurrentSurvivalTime += 20;
                         PlayerKillHeartNum++;
                         UpdateHealthText();
+                        _heartSpawner.HeartNumber--;
                         if (PlayerKillHeartNum <3)
                         {
                             Debug.Log("SpawnHeart");
@@ -166,8 +171,6 @@ public class PlayerController : MonoBehaviour
                         }
 
                     }
-
-
             }
             if (angleToObject > attackAngle && isShootingHeart&& hit.transform.gameObject.tag == "Heart")
             {
@@ -210,7 +213,7 @@ public class PlayerController : MonoBehaviour
     //     UpdateHealthText();
     // }
 
-    private void UpdateHealthText()
+    public void UpdateHealthText()
     {
         HealthText.text = "Health: " + Health; // 更新生命值文本
     }

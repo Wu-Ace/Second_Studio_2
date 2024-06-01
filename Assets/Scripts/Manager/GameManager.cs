@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Manager;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class GameManager : MonoBehaviour
@@ -11,9 +12,10 @@ public class GameManager : MonoBehaviour
     public                   static GameManager     _instance;
 
     public float           CurrentSurvivalTime; // 新增变量记录生存时长
-    // public float           WinSurvivalTime     = 0; //
+    public float           WinSurvivalTime     = 0; //
     public float           countdownTime;
     public TextMeshProUGUI timerText;
+    public GameObject winText;
 
 
     public                          bool            isWin               = false;
@@ -32,6 +34,7 @@ public class GameManager : MonoBehaviour
             Destroy(this);
         }
         _instance = this;
+        DontDestroyOnLoad(this.gameObject);
     }
     public enum GameState
     {
@@ -44,16 +47,17 @@ public class GameManager : MonoBehaviour
     }
     public GameState gameState;
 
+public bool winHasPlayed = false;
     public void UpdateGameState(GameState newGameState)
     {
         gameState = newGameState;
         switch (newGameState)
         {
             case GameState.Start:
-                heartSpawnerGameObject.SetActive(false);
-                enemySpawnerGameObject.SetActive(false);
-                playerInformation.SetActive(false);
-                _heartSpawner.SpawnHeart();
+                // heartSpawnerGameObject.SetActive(false);
+                // enemySpawnerGameObject.SetActive(false);
+                // playerInformation.SetActive(false);
+                // _heartSpawner.SpawnHeart();
                 break;
             case GameState.ShootingTutorial:
                 heartSpawnerGameObject.SetActive(true);
@@ -63,8 +67,16 @@ public class GameManager : MonoBehaviour
             case GameState.EnemySpawning:
                 heartSpawnerGameObject.SetActive(true);
                 enemySpawnerGameObject.SetActive(true);
+                enemySpawnerGameObject.GetComponent<EnemySpawner>().isSpawnEnemy=true;
+                winText.gameObject.SetActive(false);
                 break;
             case GameState.Win:
+                isWin = true;
+                winText.gameObject.SetActive(true);
+                if (!winHasPlayed)
+                {
+                    SoundManager.instance.PlayPlayerSound(playerWin_clip, 1);
+                }
                 break;
             case GameState.Lose:
                 break;
@@ -75,7 +87,7 @@ public class GameManager : MonoBehaviour
     {
         EventManager.instance.onGameStateChange += UpdateGameState;
         _heartSpawner = heartSpawnerGameObject.GetComponent<HeartSpawner>();
-        UpdateGameState(GameState.EnemySpawning);
+        UpdateGameState(GameState.Start);
         CurrentSurvivalTime = 0;
     }
 
@@ -84,7 +96,7 @@ public class GameManager : MonoBehaviour
     {
         if(GameState.Start!=gameState&&GameState.Win!=gameState&&GameState.Lose!=gameState&&GameState.ShootingTutorial!=gameState)
         {
-            CurrentSurvivalTime -= Time.deltaTime;
+            CurrentSurvivalTime += Time.deltaTime;
         }
         // CurrentSurvivalTime += Time.deltaTime; // 更新生存时长
         CheckIfWin();                          // 检查是否获胜
@@ -93,16 +105,13 @@ public class GameManager : MonoBehaviour
     }
     void CheckIfWin()
     {
-        // if (CurrentSurvivalTime >= WinSurvivalTime) // 如果生存时长达到或超过1分钟
-        // {
-        //     isWin = true;              // 玩家获胜
-        //     Debug.Log("Player Wins!");// 输出获胜信息
-        //     EventManager.instance.PlayerWin(playerWin_clip,1); // 触发玩家获胜事件
-        // }
-    }
-    public void AddTime(float timeToAdd)
-    {
-        CurrentSurvivalTime += timeToAdd;
+        if (CurrentSurvivalTime >= WinSurvivalTime) // 如果生存时长达到或超过1分钟
+        {
+            isWin = true;              // 玩家获胜
+            UpdateGameState(GameState.Win);
+            Debug.Log("Player Wins!");// 输出获胜信息
+            EventManager.instance.PlayerWin(playerWin_clip,1); // 触发玩家获胜事件
+        }
     }
 
     public float GetCurrentTime()

@@ -9,8 +9,9 @@ public class HeartSpawner : MonoBehaviour
     public int        HeartMaxNumber;
 
     private float nextSpawnTime;
-    private int   HeartNumber;
+    public int   HeartNumber;
 
+    private PlayerController playerController;
     void Start()
     {
         nextSpawnTime = Time.time + Random.Range(minSpawnTime, maxSpawnTime);
@@ -19,7 +20,7 @@ public class HeartSpawner : MonoBehaviour
 
     void Update()
     {
-        if (Time.time >= nextSpawnTime && HeartNumber < HeartMaxNumber)
+        if (Time.time >= nextSpawnTime && HeartNumber < HeartMaxNumber&&playerController.Health<3)
         {
             SpawnHeart();
             nextSpawnTime = Time.time + Random.Range(minSpawnTime, maxSpawnTime);

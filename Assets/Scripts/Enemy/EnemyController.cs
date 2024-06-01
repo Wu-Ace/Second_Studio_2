@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    EnemySpawner EnemySpawner;
+    public  EnemySpawner EnemySpawner;
     PlayerController PlayerController;
 
     private void Awake()
@@ -67,6 +67,7 @@ public class EnemyController : MonoBehaviour
         if (other.gameObject.tag == "Player")
         {
             PlayerController.Health--;
+            PlayerController.UpdateHealthText();
             EnemySpawner.EnemyNumber--;
             Debug.Log("Player Health: " + PlayerController.Health);
             EventManager.instance.PlayerHurt(PlayerHurtClip,1);

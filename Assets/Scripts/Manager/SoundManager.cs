@@ -26,6 +26,10 @@ public class SoundManager : MonoBehaviour
         // _sfxSource.pitch = pitch;
         _playerSfxSource.PlayOneShot(clip, volume);
     }
+    public void StopPlayerSound()
+    {
+        _playerSfxSource.Stop();
+    }
     public void PlayEnemySound(AudioClip clip, float volume)
     {
         // _sfxSource.pitch = pitch;
