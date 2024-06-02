@@ -13,7 +13,7 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour
 {
     public LayerMask shootableObjectLayerMask;
-    public int       bulletMag = 10;
+    public int       bulletMag = 8;
     public int       currentBullet;
     public int       Health = 3;
 
@@ -45,7 +45,7 @@ public class PlayerController : MonoBehaviour
         EventManager.instance.onPlayerShoot += PlayerShoot;
         EventManager.instance.onPlayerPress += PlayerShootHeart;
 
-        currentBullet                       =  bulletMag;
+        currentBullet                       =  7;
         PlayerKillEnemyNum                  =  0;
         PlayerKillHeartNum                  =  0;
         isLose                              =  false;
@@ -76,6 +76,7 @@ public class PlayerController : MonoBehaviour
 
     int successiveHitNum;
    [SerializeField] TextMeshProUGUI successiveHitText;
+   [SerializeField] TextMeshProUGUI currentBulletText;
     public void PlayerShoot()
     {
         float      radius        = 100f;
@@ -87,15 +88,18 @@ public class PlayerController : MonoBehaviour
         // RaycastHit hit;
         // Debug.DrawLine(transform.position, transform.position+transform.forward, Color.yellow);
          bool isSuccesiveHit = false;
-
+         if (currentBullet > 0)
+         {
+             SoundManager.instance.PlayPlayerSound(_shootClip, 1);
+             currentBullet--;
+             UpdateCurrentBulletText();
+         }
         foreach (Collider hit in hits)
         {
             Vector3 direction = hit.transform.position - transform.position;
             angleToObject = Vector3.Angle(transform.forward, direction);
             if (currentBullet > 0)
             {
-                SoundManager.instance.PlayPlayerSound(_shootClip, 1);
-                currentBullet--;
                 if (angleToObject<attackAngle && currentBullet > 0&&hit.CompareTag("Enemy"))
                 {
                     Debug.Log("Hit");
@@ -105,7 +109,12 @@ public class PlayerController : MonoBehaviour
                     // gameManager.CurrentSurvivalTime += 10;
                     isSuccesiveHit = true;
                     successiveHitNum++;
-                    UpdateSuccesiveHitText();
+                    if (successiveHitNum % 3 == 0)
+                    {
+                        bulletMag++;
+                        UpdateCurrentBulletText();
+                    }
+                        UpdateSuccesiveHitText();
                     if (hit.name == "Enemy(Clone)")
                     {
                         PlayerKillEnemyNum++;
@@ -131,9 +140,13 @@ public class PlayerController : MonoBehaviour
             UpdateSuccesiveHitText();
         }
     }
-    private void UpdateSuccesiveHitText()
+    public void UpdateSuccesiveHitText()
     {
-        successiveHitText.text = "连击数: " + successiveHitNum;
+        successiveHitText.text = "连击: " + successiveHitNum;
+    }
+    public void UpdateCurrentBulletText()
+    {
+        currentBulletText.text = "子弹: " + currentBullet+"/"+bulletMag;
     }
     [SerializeField]AudioClip absorbClip;
     public void PlayerShootHeart()
@@ -197,8 +210,20 @@ public class PlayerController : MonoBehaviour
         if (currentDistance > 0.5f && Input.deviceOrientation == DeviceOrientation.Portrait)
         {
             Debug.Log("Reload");
-            currentBullet = bulletMag;
+            if (currentBullet+bulletMag > 7)
+            {
+                bulletMag     = bulletMag - (7-currentBullet);
+                currentBullet = 7;
+            }
+            else if (currentBullet+bulletMag <= 7)
+            {
+                currentBullet = currentBullet + bulletMag;
+                bulletMag     = 0;
+            }
+
+
             SoundManager.instance.PlayPlayerSound(_reloadClip, 1);
+            UpdateCurrentBulletText();
         }
     }
 
@@ -215,7 +240,7 @@ public class PlayerController : MonoBehaviour
 
     public void UpdateHealthText()
     {
-        HealthText.text = "Health: " + Health; // 更新生命值文本
+        HealthText.text = "体力: " + Health; // 更新生命值文本
     }
 
     private void OnDestroy()

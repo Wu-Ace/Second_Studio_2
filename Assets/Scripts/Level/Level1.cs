@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 
 public class Level1 : MonoBehaviour
 {
@@ -44,7 +45,7 @@ public class Level1 : MonoBehaviour
         enemySpawner                   = GetComponent<EnemySpawner>();
         // playerController               = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
         playerController.currentBullet = 100;
-        AIVoice.PlayOneShot(AIVoice1);
+        // AIVoice.PlayOneShot(AIVoice1);
     }
 
     private float      holdEvenlyTimer           = 0;
@@ -66,6 +67,7 @@ public class Level1 : MonoBehaviour
                 if (!AIVoice.isPlaying)
                 {
                     currentState = GameState.HoldThePhoneEvenly;
+                    // currentState = GameState.FinalShoot;
                 }
                 break;
 
@@ -199,7 +201,6 @@ public class Level1 : MonoBehaviour
                     hasRunOnce                 = false;
                     hasSpawnEnemy              = false;
                     IEnumeratorHasSpawnedEnemy = false;
-                    GameManager._instance.UpdateGameState(GameManager.GameState.EnemySpawning);
                     enemySpawner.isSpawnEnemy           = true;
                     // playerController.PlayerKillEnemyNum = 0;
                     if (!hasRunOnce)
@@ -215,7 +216,20 @@ public class Level1 : MonoBehaviour
                 break;
             case GameState.FinalShoot:
                 playerController.currentBullet = 100;
-                if (playerController.PlayerKillEnemyNum == 8)
+                if (!hasSpawnEnemy)
+                {
+                    StartCoroutine(SpawnEnemyAndDelay(enemyPrefab, mainCamera.gameObject.transform.position - mainCamera.gameObject.transform.up * 10));
+                    hasSpawnEnemy = true;
+                }
+                if (enemy == null && IEnumeratorHasSpawnedEnemy)
+                {
+                    hasRunOnce                 = false;
+                    hasSpawnEnemy              = false;
+                    IEnumeratorHasSpawnedEnemy = false;
+                    enemySpawner.isSpawnEnemy  = true;
+                    // playerController.PlayerKillEnemyNum = 0;
+                }
+                if (playerController.PlayerKillEnemyNum == 7)
                 {
                     GameManager._instance.UpdateGameState(GameManager.GameState.Win);
                 }
@@ -236,7 +250,7 @@ public class Level1 : MonoBehaviour
     {
         enemySpawner.SpawnEnemy(enemyPrefab, spawnPosition);
         hasSpawnEnemy = true;
-        yield return new WaitForSeconds(0); // Wait for 0.1 seconds
+        yield return new WaitForSeconds(Random.Range(2,5)); // Wait for 0.1 seconds
         enemy         = GameObject.FindWithTag("Enemy");
         IEnumeratorHasSpawnedEnemy = true;
         // Debug.Log("enemy"+(enemy!=null));

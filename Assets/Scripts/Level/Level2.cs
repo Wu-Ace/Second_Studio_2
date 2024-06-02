@@ -38,39 +38,58 @@ public class Level2 : MonoBehaviour
 
     }
 
-    // Update is called once per frame
+    bool AiVoiceHasPlayed = false;
+    bool hasStartedSpawning = false;
+    public GameObject StaticEnemy;
+    public GameObject NormalEnemy;
+    public GameObject HealthText;
     void Update()
     {
         switch (currentState)
         {
             case GameState.Start:
-                AIVoice.clip = AIVoice1;
-                AIVoice.Play();
-                currentState = GameState.ShootWithLimitedBullet;
+                if(!AiVoiceHasPlayed)
+                {
+                    // AIVoice.PlayOneShot(AIVoice1);
+                    AiVoiceHasPlayed = true;
+                }
+                if(!AIVoice.isPlaying)
+                {
+                    AiVoiceHasPlayed = false;
+                    currentState = GameState.ShootWithLimitedBullet;
+                }
                 break;
             case GameState.ShootWithLimitedBullet:
-                enemySpawner.isSpawnEnemy = true;
+                playerController.UpdateCurrentBulletText();
+                if (!hasStartedSpawning)
+                {
+                    StartCoroutine(SpawnEnemyAndDelay(StaticEnemy, Random.onUnitSphere * 50));
+                    hasStartedSpawning = true;
+                }
                 if (playerController.currentBullet <= 0)
                 {
                     enemySpawner.isSpawnEnemy = false;
-                    currentState = GameState.ShootWithLimitedBullet;
                 }
 
-                if (playerController.PlayerKillEnemyNum >= 10)
+                if (playerController.PlayerKillEnemyNum >= 5)
                 {
+                    hasStartedSpawning = false;
                     currentState = GameState.NewEnemy;
                 }
                 break;
             case GameState.NewEnemy:
-                enemySpawner.enemyPrefab[1] = enemySpawner.enemyPrefabs[1];
-                StartCoroutine(enemySpawner.SpawnEnemies1());
+                HealthText.SetActive(true);
+                if (!hasStartedSpawning)
+                {
+                    StartCoroutine(enemySpawner.SpawnNormalEnemy());
+                }
                 if(playerController.PlayerKillEnemyNum>=20)
                 {
                     currentState = GameState.SuperEnemyWave;
                 }
                 break;
             case GameState.SuperEnemyWave:
-                enemySpawner.enemyType0CountMax *= 2;
+                enemySpawner.StaticEnemyCount *= 2;
                 enemySpawner.enemyType1CountMax *= 2;
                 if(playerController.PlayerKillEnemyNum>=40)
                 {
@@ -79,5 +98,17 @@ public class Level2 : MonoBehaviour
                 }
                 break;
         }
+    }
+    private IEnumerator SpawnEnemyAndDelay(GameObject enemyPrefab, Vector3 spawnPosition)
+    {
+        for(int i = 0 ; i < 5 ; i++)
+        {
+            spawnPosition = Random.onUnitSphere * 50;
+            enemySpawner.SpawnEnemy(enemyPrefab, spawnPosition);
+            // hasSpawnEnemy = true;
+            yield return new WaitForSeconds(Random.Range(3, 6)); // Wait for a random time between 2 and 5 seconds
+        }
+        // enemy                      = GameObject.FindWithTag("Enemy");
+        // IEnumeratorHasSpawnedEnemy = true;
     }
 }

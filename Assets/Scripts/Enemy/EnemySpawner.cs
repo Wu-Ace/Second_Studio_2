@@ -3,8 +3,10 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public  GameObject[] enemyPrefabs = new GameObject[4];
-    public  GameObject[]   enemyPrefab = new GameObject[4];
+    public GameObject StaticEnemy;
+    public GameObject NormalEnemy;
+    public GameObject ShootToMoveEnemy;
+
     public  float        spawnRadius  ;
     public  float        minSpawnTime ;
     public  float        maxSpawnTime ;
@@ -13,7 +15,7 @@ public class EnemySpawner : MonoBehaviour
     public  int          EnemyTrueMaxNumber;
 
 
-    private float nextSpawnTime;
+    private float nextSpawnTime = 0;
 
     [SerializeField] private bool isCircle;
 
@@ -31,86 +33,85 @@ public class EnemySpawner : MonoBehaviour
         nextSpawnTime  = Time.time + Random.Range(minSpawnTime, maxSpawnTime);
         EnemyNumber    = 0;
         EnemyMaxNumber = 1;
-        enemyPrefab[0]   = enemyPrefabs[0];
     }
 
     void Update()
     {
-        if (isSpawnEnemy)
-        {
-            // 如果当前时间大于等于下一次生成时间
-            if (EnemyNumber == 0)
-            {
-                SpawnEnemy(enemyPrefab[0], transform.position + Random.onUnitSphere * spawnRadius);
-                EnemyNumber++;
-                enemyType0Count++;
-                nextSpawnTime = Time.time + Random.Range(minSpawnTime, maxSpawnTime);
-            }
-            else if (Time.time >= nextSpawnTime && EnemyNumber < EnemyMaxNumber)
-            {
-                // 生成敌人
-                SpawnEnemy(enemyPrefab[0], transform.position + Random.onUnitSphere * spawnRadius);
-                EnemyNumber++;
-                enemyType0Count++;
-                // 计算下一次生成时间
-                nextSpawnTime = Time.time + Random.Range(minSpawnTime, maxSpawnTime);
-            }
-        }
+        // if (isSpawnEnemy)
+        // {
+        //     // 如果当前时间大于等于下一次生成时间
+        //     if (EnemyNumber == 0)
+        //     {
+        //         SpawnEnemy(enemyPrefab[0], transform.position + Random.onUnitSphere * spawnRadius);
+        //         EnemyNumber++;
+        //         StaticEnemyCount++;
+        //         nextSpawnTime = Time.time + Random.Range(minSpawnTime, maxSpawnTime);
+        //     }
+        //     else if (EnemyNumber!=0&& Time.time >= nextSpawnTime && EnemyNumber < EnemyMaxNumber)
+        //     {
+        //         SpawnEnemy(enemyPrefab[0], transform.position + Random.onUnitSphere * spawnRadius);
+        //         EnemyNumber++;
+        //         StaticEnemyCount++;
+        //         nextSpawnTime = Time.time + Random.Range(minSpawnTime, maxSpawnTime);
+        //     }
+        // }
     }
 
-    public void SpawnEnemy()
-    {
-        Vector3 spawnPosition;
-        // 随机生成位置
-        if (isCircle)
-        {
-            spawnPosition   = transform.position + Random.onUnitSphere * spawnRadius;
-            spawnPosition.y = 0;
-            // 生成敌人
-        }
-        else
-        {
-            spawnPosition = transform.position + Random.onUnitSphere * spawnRadius;
-        }
-        // 生成敌人
-        Instantiate(enemyPrefab[0], spawnPosition, Quaternion.identity);
-        EnemyNumber++;
-    }
-    public void SpawnEnemy(Vector3 spawnPosition)
-        {
-            Instantiate(enemyPrefab[0], spawnPosition, Quaternion.identity);
-            EnemyNumber++;
-        }
+    // public void SpawnEnemy()
+    // {
+    //     Vector3 spawnPosition;
+    //     // 随机生成位置
+    //     if (isCircle)
+    //     {
+    //         spawnPosition   = transform.position + Random.onUnitSphere * spawnRadius;
+    //         spawnPosition.y = 0;
+    //         // 生成敌人
+    //     }
+    //     else
+    //     {
+    //         spawnPosition = transform.position + Random.onUnitSphere * spawnRadius;
+    //     }
+    //     // 生成敌人
+    //     Instantiate(enemyPrefab[0], spawnPosition, Quaternion.identity);
+    //     EnemyNumber++;
+    // }
+    // public void SpawnEnemy(Vector3 spawnPosition)
+    //     {
+    //         Instantiate(enemyPrefab[0], spawnPosition, Quaternion.identity);
+    //         EnemyNumber++;
+    //     }
 
     public void SpawnEnemy(GameObject enemyPrefab, Vector3 spawnPosition)
     {
+        spawnPosition.y = 0;
         EnemyNumber++;
         Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
     }
 
-    public int enemyType0Count = 0;
-    public int enemyType0CountMax = 4;
-    public IEnumerator SpawnEnemies0()
+    public int StaticEnemyCount = 0;
+    public int StaticEnemyCountMax = 4;
+    public IEnumerator SpawnStaticEnemy()
     {
         while (true)
         {
-            if (enemyType0Count < enemyType0CountMax)
+            if (StaticEnemyCount < StaticEnemyCountMax&&nextSpawnTime<Time.time)
             {
-                SpawnEnemy(enemyPrefab[0], transform.position + Random.onUnitSphere * spawnRadius);
-                enemyType0Count++;
+                SpawnEnemy(StaticEnemy, transform.position + Random.onUnitSphere * spawnRadius);
+                StaticEnemyCount++;
+                nextSpawnTime = Time.time + Random.Range(minSpawnTime, maxSpawnTime);
             }
             yield return new WaitForSeconds(Random.Range(2,5));
         }
     }
     public int enemyType1Count = 0;
     public int enemyType1CountMax = 1;
-    public IEnumerator SpawnEnemies1()
+    public IEnumerator SpawnNormalEnemy()
     {
         while (true)
         {
             if (enemyType1Count < enemyType1CountMax)
             {
-                SpawnEnemy(enemyPrefab[1], transform.position + Random.onUnitSphere * spawnRadius);
+                SpawnEnemy(NormalEnemy, transform.position + Random.onUnitSphere * spawnRadius);
                 enemyType1Count++;
             }
             yield return new WaitForSeconds (Random.Range(6,10));

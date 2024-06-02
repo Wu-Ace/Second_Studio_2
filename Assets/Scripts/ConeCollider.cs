@@ -101,35 +101,18 @@ public class ConeCollider : MonoBehaviour {
                         {
                             if (hit.name == "NormalEnemy(Clone)") // Add this line
                             {
-                                if (!enemy.isSoundPlayed)
-                                {
-                                    SoundManager.instance.PlayEnemySound(normalEnemyClip1, 1);
-                                    enemy.isSoundPlayed = true;
-                                } // Add this line
                                 NormalEnemyUI.SetActive(true);
                                 StaticEnemyUI.SetActive(false);
                             }
                             else if(hit.name == "ShootToMoveEnemy(Clone)")
                             {
-                                if (!enemy.isSoundPlayed)
-                                {
-                                    SoundManager.instance.PlayEnemySound(shootToMoveEnemyClip1, 1);
-                                    enemy.isSoundPlayed = true;
-                                }
                                 NormalEnemyUI.SetActive(false);
                                 StaticEnemyUI.SetActive(false);
-
                             }
                             else if(hit.name == "StatueEnemy(Clone)")
                             {
-                                if (!enemy.isSoundPlayed)
-                                {
-                                    SoundManager.instance.PlayEnemySound(shootToMoveEnemyClip1, 1);
-                                    enemy.isSoundPlayed = true;
-                                }
                                 NormalEnemyUI.SetActive(false);
                                 StaticEnemyUI.SetActive(false);
-
                             }
                             else if(hit.name == "MusicEnemy(Clone)")
                             {
@@ -144,11 +127,6 @@ public class ConeCollider : MonoBehaviour {
                             }
                             else if (hit.name == "StaticEnemy(Clone)")
                             {
-                                if (!enemy.isSoundPlayed)
-                                {
-                                    SoundManager.instance.PlayEnemySound(shootToMoveEnemyClip1, 1);
-                                    enemy.isSoundPlayed = true;
-                                }
                                 NormalEnemyUI.SetActive(false);
                                 StaticEnemyUI.SetActive(true);
                             }
