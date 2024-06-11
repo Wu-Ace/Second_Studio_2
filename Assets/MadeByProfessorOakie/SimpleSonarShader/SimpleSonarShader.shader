@@ -3,11 +3,11 @@
 // By default, this happens by having the object be a child of SimpleSonarShader_Parent.
 Shader "MadeByProfessorOakie/SimpleSonarShader" {
 	Properties{
-		_Color("Color", Color) = (1,1,1,1)
+		_Color("Color", Color) = (1,0.58,0.29,1)
 		_MainTex("Albedo (RGB)", 2D) = "white" {}
 		_Glossiness("Smoothness", Range(0,1)) = 0.5
 		_Metallic("Metallic", Range(0,1)) = 0.0
-		_RingColor("Ring Color", Color) = (1,1,1,1)
+		_RingColor("Ring Color", Color) = (1,0.58,0.29,1)
 		_RingColorIntensity("Ring Color Intensity", float) = 2
 		_RingSpeed("Ring Speed", float) = 1
 		_RingWidth("Ring Width", float) = 0.1

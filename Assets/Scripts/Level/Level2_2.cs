@@ -22,14 +22,17 @@ public class Level3 : MonoBehaviour
     public  AudioClip    BackgroundMusicClip;
     void Start()
     {
+        playerController.isLevel1_2 = false;
+
         if (BackgroundMusic.Instance != null)
         {
             Destroy(BackgroundMusic.Instance.gameObject);
         }
         BackgroundMusicSource.loop         = true;
         BackgroundMusicSource.clip         = BackgroundMusicClip;
-        BackgroundMusicSource.volume       = 0.02f;
-        currentState                       = GameState.Start;
+        BackgroundMusicSource.volume       = 0.2f;
+        BackgroundMusicSource.Play();
+        currentState                       = GameState.NewEnemyWave;
         enemySpawner                       = GetComponent<EnemySpawner>();
         playerController                   = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
         playerController.currentBullet     = 7;
@@ -97,7 +100,7 @@ public class Level3 : MonoBehaviour
             case GameState.NewEnemyWave:
                 if (!AIVoiceHasPlayed)
                 {
-                    AIVoice.PlayOneShot(AIVoice_NewEnemyWave);
+                    // AIVoice.PlayOneShot(AIVoice_NewEnemyWave);
                     AIVoiceHasPlayed = true;
                 }
                 if (AIVoice.isPlaying==false &&!hasStartedSpawning)

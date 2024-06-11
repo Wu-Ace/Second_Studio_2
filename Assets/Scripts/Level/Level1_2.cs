@@ -36,13 +36,14 @@ public class Level1_2 : MonoBehaviour
     public AudioSource AIVoice;
     public AudioSource BackgroundMusicSource;
     public AudioClip   BackgroundMusicClip;
-    public AudioClip AIVoice1_PhoneFront;
-    public AudioClip AIVoice2_Shoot;
-    public AudioClip AIVoice2_Shoot2;
-    public AudioClip AIVoice3_ShootBackward;
-    public AudioClip AIVoice_ShootAFew;
-    public AudioClip AIVoice4_Reload;
-    public AudioClip AIVoice_FinalShoot;
+    public AudioClip   AIVoice1_PhoneFront;
+    public AudioClip   AIVoice2_Shoot;
+    public AudioClip   AIVoice2_Shoot2;
+    public AudioClip   AIVoice3_ShootBackward;
+    public AudioClip   AIVoice_ShootAFew;
+    public AudioClip   AIVoice4_Reload;
+    public AudioClip   AIVoice_FinalShoot;
+    public AudioClip   WinClip;
 
 
 
@@ -57,7 +58,7 @@ public class Level1_2 : MonoBehaviour
         }
         BackgroundMusicSource.loop   = true;
         BackgroundMusicSource.clip   = BackgroundMusicClip;
-        BackgroundMusicSource.volume = 0.02f;
+        BackgroundMusicSource.volume = 0.1f;
         AIVoice.volume               = 1f;
         BackgroundMusicSource.Play();
         playerController.Health            = 10;
@@ -176,8 +177,8 @@ public class Level1_2 : MonoBehaviour
                     hasRunOnce                     = false;
                     hasSpawnEnemy                  = false;
                     IEnumeratorHasSpawnedEnemy     = false;
-                    playerController.currentBullet = 2;
-                    Bullet                         = 5;
+                    playerController.currentBullet = 5;
+                    // Bullet                         = 5;
                     currentState                   = GameState.ShootAFew;
                 }
                 break;
@@ -201,6 +202,11 @@ public class Level1_2 : MonoBehaviour
                 {
                     StartCoroutine(SpawnEnemyAndDelay(enemyPrefab, Random.onUnitSphere * 50));
                     enemy = GameObject.FindWithTag("Enemy");
+                }
+
+                if (playerController.currentBullet <= 0)
+                {
+                    Destroy(enemy);
                 }
 
                 if (playerController.currentBullet<=0)
@@ -261,8 +267,9 @@ public class Level1_2 : MonoBehaviour
                 {
                     HapticPatterns.PlayConstant(1.0f, 0.0f, 1.0f);
                     Debug.Log("1");
-                    GameManager._instance.gameState = GameManager.GameState.Win;
+                    // GameManager._instance.gameState = GameManager.GameState.Win;
                     WinText.SetActive(true);
+                    AIVoice.PlayOneShot(WinClip);
                 }
                 break;
         }

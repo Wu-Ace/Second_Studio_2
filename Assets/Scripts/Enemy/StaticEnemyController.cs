@@ -53,6 +53,7 @@ public class StaticEnemyController : MonoBehaviour
         Debug.Log("EnemyController:EnemyBeingHurt");
         if (enemy == this.gameObject)
         {
+            SoundManager.instance.PlayEnemySound(DefeatedClip, 0.5f);
             PlayerController.PlayerKillEnemyNum++;
             Debug.Log("EnemyController:EnemyBeingHurt");
             Debug.Log("Enemy is being hurt");
@@ -63,9 +64,8 @@ public class StaticEnemyController : MonoBehaviour
     }
     private IEnumerator PlayEnemyHurtSound()
     {
-        yield return new WaitForSeconds(1f);
         SoundManager.instance.PlayEnemySound(DefeatedClip, 0.5f);
-
+        yield return new WaitForSeconds(0.5f);
     }
 
     private void OnCollisionEnter(Collision other)

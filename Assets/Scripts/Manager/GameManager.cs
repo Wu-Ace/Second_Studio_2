@@ -71,12 +71,13 @@ public bool winHasPlayed = false;
                 winText.gameObject.SetActive(false);
                 break;
             case GameState.Win:
-                isWin = true;
-                winText.gameObject.SetActive(true);
-                if (!winHasPlayed)
-                {
-                    SoundManager.instance.PlayPlayerSound(playerWin_clip, 1);
-                }
+                // isWin = true;
+                // winText.gameObject.SetActive(true);
+                // if (!winHasPlayed)
+                // {
+                //     SoundManager.instance.PlayPlayerSound(playerWin_clip, 1);
+                //     winHasPlayed=true;
+                // }
                 break;
             case GameState.Lose:
                 break;
@@ -105,13 +106,13 @@ public bool winHasPlayed = false;
     }
     void CheckIfWin()
     {
-        if (CurrentSurvivalTime >= WinSurvivalTime) // 如果生存时长达到或超过1分钟
-        {
-            isWin = true;              // 玩家获胜
-            UpdateGameState(GameState.Win);
-            Debug.Log("Player Wins!");// 输出获胜信息
-            EventManager.instance.PlayerWin(playerWin_clip,1); // 触发玩家获胜事件
-        }
+        // if (CurrentSurvivalTime >= WinSurvivalTime) // 如果生存时长达到或超过1分钟
+        // {
+        //     isWin = true;              // 玩家获胜
+        //     UpdateGameState(GameState.Win);
+        //     Debug.Log("Player Wins!");// 输出获胜信息
+        //     EventManager.instance.PlayerWin(playerWin_clip,1); // 触发玩家获胜事件
+        // }
     }
 
     public float GetCurrentTime()

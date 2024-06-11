@@ -98,6 +98,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
+  playerHurtClip: {fileID: 8300000, guid: dfbb6231b4145ee4b8a8b32b0dcb2ef5, type: 3}
   defeatedClip: {fileID: 8300000, guid: a891f12083f0c7f40acb5ab5e32f7cd5, type: 3}
   health: 1
   moveDistance: 5

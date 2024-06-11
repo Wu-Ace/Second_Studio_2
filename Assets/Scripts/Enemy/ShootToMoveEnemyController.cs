@@ -26,6 +26,7 @@ public class ShootToMoveEnemyController : MonoBehaviour
 
     // Update is called once per frame
     private float distanceToPlayer;
+    public AudioClip playerHurtClip;
     void Update()
     {
         distanceToPlayer = Vector3.Distance(transform.position, player.position);
@@ -68,7 +69,7 @@ public class ShootToMoveEnemyController : MonoBehaviour
             playerController.Health--;
             enemySpawner.EnemyNumber--;
             Debug.Log("Player Health: " + playerController.Health);
-            // EventManager.instance.PlayerHurt(playerHurtClip,1);
+            EventManager.instance.PlayerHurt(playerHurtClip,1);
             Destroy(this.gameObject);
         }
     }

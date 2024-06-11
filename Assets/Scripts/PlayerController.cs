@@ -96,8 +96,13 @@ public class PlayerController : MonoBehaviour
         {
             SoundManager.instance.PlayPlayerSound(_shootClip, 1);
             currentBullet--;
+            if(currentBullet==0)
+            {
+                SoundManager.instance.PlayPlayerSound(_emptyClip, 1);
+            }
             UpdateCurrentBulletText();
         }
+
 
         foreach (Collider hit in hits)
         {
@@ -114,6 +119,7 @@ public class PlayerController : MonoBehaviour
                     // gameManager.CurrentSurvivalTime += 10;
                     isSuccesiveHit = true;
                     successiveHitNum++;
+                    ComboEffect.instance.TriggerComboEffect(successiveHitNum);
                     if (needSuccessiveHit &&successiveHitNum > 3 )
                     {
                         bulletMag += successiveHitNum - 2;
