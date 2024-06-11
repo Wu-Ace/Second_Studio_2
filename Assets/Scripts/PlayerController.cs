@@ -17,15 +17,15 @@ public class PlayerController : MonoBehaviour
     public int       currentBullet;
     public int       Health = 3;
 
-    public int       PlayerKillEnemyNum=0;
-    public int      PlayerKillHeartNum=0;
+    public int PlayerKillEnemyNum = 0;
+    public int PlayerKillHeartNum = 0;
 
 
-    private float old_y = 0;
-    private float new_y;
-    private float currentDistance = 0;
-    public  TextMeshProUGUI  HealthText;
-    public  bool  isLose;
+    private float           old_y = 0;
+    private float           new_y;
+    private float           currentDistance = 0;
+    public  TextMeshProUGUI HealthText;
+    public  bool            isLose;
 
 
     [SerializeField] private AudioClip         _shootClip;
@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioClip         _dieClip;
     private                  AndroidJavaObject vibrator;
 
-    public  ConeCollider     ConeCollider;
+    public  ConeCollider ConeCollider;
     private GameObject   heartGameObject;
     public  HeartSpawner _heartSpawner;
     public  GameManager  gameManager;
@@ -45,11 +45,11 @@ public class PlayerController : MonoBehaviour
         EventManager.instance.onPlayerShoot += PlayerShoot;
         EventManager.instance.onPlayerPress += PlayerShootHeart;
 
-        currentBullet                       =  7;
-        PlayerKillEnemyNum                  =  0;
-        PlayerKillHeartNum                  =  0;
-        isLose                              =  false;
-        successiveHitNum                    =  0;
+        currentBullet      = 7;
+        PlayerKillEnemyNum = 0;
+        PlayerKillHeartNum = 0;
+        isLose             = false;
+        successiveHitNum   = 0;
 
         UpdateHealthText();
         if (EventManager.instance == null)
@@ -59,8 +59,10 @@ public class PlayerController : MonoBehaviour
     }
 
     private bool  isShootingHeart;
-    public float shootHeartTime;
+    public  float shootHeartTime;
     private float shootHeartTimer;
+    public bool needSuccessiveHit=true;
+
     public void Update()
     {
         Debug.DrawLine(transform.position, transform.position + transform.forward * 10, Color.yellow);
@@ -74,9 +76,10 @@ public class PlayerController : MonoBehaviour
         CheckPlayerState();
     }
 
-    int successiveHitNum;
-   [SerializeField] TextMeshProUGUI successiveHitText;
-   [SerializeField] TextMeshProUGUI currentBulletText;
+    public           int             successiveHitNum;
+    [SerializeField] TextMeshProUGUI successiveHitText;
+    [SerializeField] TextMeshProUGUI currentBulletText;
+
     public void PlayerShoot()
     {
         float      radius        = 100f;
@@ -87,20 +90,22 @@ public class PlayerController : MonoBehaviour
         // Ray        ray  = new Ray(transform.position,  transform.forward);
         // RaycastHit hit;
         // Debug.DrawLine(transform.position, transform.position+transform.forward, Color.yellow);
-         bool isSuccesiveHit = false;
-         if (currentBullet > 0)
-         {
-             SoundManager.instance.PlayPlayerSound(_shootClip, 1);
-             currentBullet--;
-             UpdateCurrentBulletText();
-         }
+        bool isSuccesiveHit = false;
+
+        if (currentBullet > 0)
+        {
+            SoundManager.instance.PlayPlayerSound(_shootClip, 1);
+            currentBullet--;
+            UpdateCurrentBulletText();
+        }
+
         foreach (Collider hit in hits)
         {
             Vector3 direction = hit.transform.position - transform.position;
             angleToObject = Vector3.Angle(transform.forward, direction);
             if (currentBullet > 0)
             {
-                if (angleToObject<attackAngle && currentBullet > 0&&hit.CompareTag("Enemy"))
+                if (angleToObject < attackAngle && currentBullet > 0 && hit.CompareTag("Enemy"))
                 {
                     Debug.Log("Hit");
                     Debug.DrawLine(transform.position, hit.transform.position, Color.yellow);
@@ -109,13 +114,14 @@ public class PlayerController : MonoBehaviour
                     // gameManager.CurrentSurvivalTime += 10;
                     isSuccesiveHit = true;
                     successiveHitNum++;
-                    if (successiveHitNum % 3 == 0)
+                    if (needSuccessiveHit &&successiveHitNum > 3 )
                     {
-                        bulletMag++;
+                        bulletMag += successiveHitNum - 2;
                         UpdateCurrentBulletText();
                     }
-                        UpdateSuccesiveHitText();
-                    if (hit.name == "Enemy(Clone)")
+
+                    UpdateSuccesiveHitText();
+                    if (hit.tag == "Enemy")
                     {
                         PlayerKillEnemyNum++;
                     }
@@ -134,21 +140,26 @@ public class PlayerController : MonoBehaviour
             }
 
         }
-        if(!isSuccesiveHit)
+
+        if (!isSuccesiveHit)
         {
             successiveHitNum = 0;
             UpdateSuccesiveHitText();
         }
     }
+
     public void UpdateSuccesiveHitText()
     {
         successiveHitText.text = "连击: " + successiveHitNum;
     }
+
     public void UpdateCurrentBulletText()
     {
-        currentBulletText.text = "子弹: " + currentBullet+"/"+bulletMag;
+        currentBulletText.text = "子弹: " + currentBullet + "/" + bulletMag;
     }
-    [SerializeField]AudioClip absorbClip;
+
+    [SerializeField] AudioClip absorbClip;
+
     public void PlayerShootHeart()
     {
         float      radius        = 100f;
@@ -163,32 +174,33 @@ public class PlayerController : MonoBehaviour
             if (angleToObject < attackAngle && hit.transform.gameObject.tag == "Heart")
             {
 
-                    Debug.DrawLine(transform.position, hit.transform.position, Color.yellow);
-                    isShootingHeart = true;
-                    SoundManager.instance.PlayPlayerSound(absorbClip, 1);
-                    if (shootHeartTimer >= shootHeartTime)
-                    {
-                        Health++;
-                        Debug.Log("shootHeart");
-                        EventManager.instance.HeartHit(hit.transform.gameObject);
-                        shootHeartTimer                 =  0f;
-                        isShootingHeart                 =  false;
-                        // gameManager.CurrentSurvivalTime += 20;
-                        PlayerKillHeartNum++;
-                        UpdateHealthText();
-                        _heartSpawner.HeartNumber--;
-                        if (PlayerKillHeartNum <3)
-                        {
-                            Debug.Log("SpawnHeart");
-                            _heartSpawner.SpawnHeart();
-                        }
-
-                    }
-            }
-            if (angleToObject > attackAngle && isShootingHeart&& hit.transform.gameObject.tag == "Heart")
-            {
-                    isShootingHeart = false;
+                Debug.DrawLine(transform.position, hit.transform.position, Color.yellow);
+                isShootingHeart = true;
+                SoundManager.instance.PlayPlayerSound(absorbClip, 1);
+                if (shootHeartTimer >= shootHeartTime)
+                {
+                    Health++;
+                    Debug.Log("shootHeart");
+                    EventManager.instance.HeartHit(hit.transform.gameObject);
                     shootHeartTimer = 0f;
+                    isShootingHeart = false;
+                    // gameManager.CurrentSurvivalTime += 20;
+                    PlayerKillHeartNum++;
+                    UpdateHealthText();
+                    _heartSpawner.HeartNumber--;
+                    if (PlayerKillHeartNum < 3)
+                    {
+                        Debug.Log("SpawnHeart");
+                        _heartSpawner.SpawnHeart();
+                    }
+
+                }
+            }
+
+            if (angleToObject > attackAngle && isShootingHeart && hit.transform.gameObject.tag == "Heart")
+            {
+                isShootingHeart = false;
+                shootHeartTimer = 0f;
             }
         }
     }
@@ -199,7 +211,7 @@ public class PlayerController : MonoBehaviour
     }
 
 
-
+    public bool isLevel1_2=false;
     public void CheckIfReload()
     {
 
@@ -207,15 +219,15 @@ public class PlayerController : MonoBehaviour
         currentDistance = new_y - old_y;
         old_y           = new_y;
 
-        if (currentDistance > 0.5f && Input.deviceOrientation == DeviceOrientation.Portrait)
+        if (!isLevel1_2&&currentDistance > 0.5f && Input.deviceOrientation == DeviceOrientation.Portrait)
         {
             Debug.Log("Reload");
-            if (currentBullet+bulletMag > 7)
+            if (currentBullet + bulletMag > 7)
             {
-                bulletMag     = bulletMag - (7-currentBullet);
+                bulletMag     = bulletMag - (7 - currentBullet);
                 currentBullet = 7;
             }
-            else if (currentBullet+bulletMag <= 7)
+            else if (currentBullet + bulletMag <= 7)
             {
                 currentBullet = currentBullet + bulletMag;
                 bulletMag     = 0;
@@ -247,11 +259,12 @@ public class PlayerController : MonoBehaviour
     {
         EventManager.instance.onPlayerShoot -= PlayerShoot;
     }
+
     private void CheckPlayerState()
     {
-        if (Health <= 0&&GameManager.GameState.Playing==GameManager._instance.gameState)
+        if (Health <= 0 && GameManager.GameState.Playing == GameManager._instance.gameState)
         {
-            EventManager.instance.PlayerDie(_dieClip,0.7f);
+            EventManager.instance.PlayerDie(_dieClip, 0.7f);
             EventManager.instance.GameStateChange(GameManager.GameState.Lose);
         }
 
@@ -263,6 +276,20 @@ public class PlayerController : MonoBehaviour
         if (PlayerKillHeartNum == 3)
         {
             EventManager.instance.GameStateChange(GameManager.GameState.EnemySpawning);
+        }
+    }
+
+    public Dictionary<string, int> killCount = new Dictionary<string, int>();
+
+    public void IncrementKillCount(string enemyName)
+    {
+        if (killCount.ContainsKey(enemyName))
+        {
+            killCount[enemyName]++;
+        }
+        else
+        {
+            killCount.Add(enemyName, 1);
         }
     }
 }

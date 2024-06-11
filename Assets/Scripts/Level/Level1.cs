@@ -42,10 +42,11 @@ public class Level1 : MonoBehaviour
     {
         // 游戏开始时，状态设置为LookUp
         currentState                   = GameState.Start;
-        enemySpawner                   = GetComponent<EnemySpawner>();
+        // currentState = GameState.Shoot1;
+        enemySpawner = GetComponent<EnemySpawner>();
         // playerController               = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
         playerController.currentBullet = 100;
-        // AIVoice.PlayOneShot(AIVoice1);
+        AIVoice.PlayOneShot(AIVoice1);
     }
 
     private float      holdEvenlyTimer           = 0;
@@ -74,17 +75,18 @@ public class Level1 : MonoBehaviour
             case GameState.HoldThePhoneEvenly:
                 if (!hasRunOnce)
                 {
+                    playerController.currentBullet = 100;
                     AIVoice.PlayOneShot(AIVoice2);
                     hasRunOnce = true;
                 }
-                if (mainCamera.localRotation.eulerAngles.x >= 70 && mainCamera.localRotation.eulerAngles.x <= 100)
+                if (AIVoice.isPlaying==false &&mainCamera.localRotation.eulerAngles.x >= 70 && mainCamera.localRotation.eulerAngles.x <= 100)
                 {
                     // 当手机端平时，开始计时
                     holdEvenlyTimer += Time.deltaTime;
                     Debug.Log("holdEvenlyTimer: " + holdEvenlyTimer);
 
                     // 当计时器的值大于等于3秒时，切换到下一个状态
-                    if (holdEvenlyTimer >= 3)
+                    if (AIVoice.isPlaying==false && holdEvenlyTimer >= 3)
                     {
                         Debug.Log("HoldThePhoneEvenly");
                         previousYRotation = mainCamera.localRotation.eulerAngles.y;
@@ -148,7 +150,7 @@ public class Level1 : MonoBehaviour
                     AIVoice.PlayOneShot(AIVoiceShoot1);
                     hasRunOnce                = true;
                 }
-                if(!hasSpawnEnemy)
+                if(AIVoice.isPlaying ==false &&!hasSpawnEnemy)
                 {
                     Debug.Log("Shoot1");
                     StartCoroutine(SpawnEnemyAndDelay(enemyPrefab, mainCamera.gameObject.transform.position - mainCamera.gameObject.transform.right * 10));
@@ -170,7 +172,7 @@ public class Level1 : MonoBehaviour
                     AIVoice.PlayOneShot(AIVoiceShoot2);
                     hasRunOnce = true;
                 }
-                if (!hasSpawnEnemy)
+                if (AIVoice.isPlaying ==false &&!hasSpawnEnemy)
                 {
                     Debug.Log("Shoot2");
                     StartCoroutine(SpawnEnemyAndDelay(enemyPrefab, mainCamera.gameObject.transform.position + mainCamera.gameObject.transform.right * 10));
@@ -190,7 +192,7 @@ public class Level1 : MonoBehaviour
                     AIVoice.PlayOneShot(AIVoiceShoot3);
                     hasRunOnce = true;
                 }
-                if (!hasSpawnEnemy)
+                if (AIVoice.isPlaying ==false &&!hasSpawnEnemy)
                 {
                     StartCoroutine(SpawnEnemyAndDelay(enemyPrefab, mainCamera.gameObject.transform.position - mainCamera.gameObject.transform.up * 10));
 
@@ -229,7 +231,7 @@ public class Level1 : MonoBehaviour
                     enemySpawner.isSpawnEnemy  = true;
                     // playerController.PlayerKillEnemyNum = 0;
                 }
-                if (playerController.PlayerKillEnemyNum == 7)
+                if (playerController.PlayerKillEnemyNum == 8)
                 {
                     GameManager._instance.UpdateGameState(GameManager.GameState.Win);
                 }

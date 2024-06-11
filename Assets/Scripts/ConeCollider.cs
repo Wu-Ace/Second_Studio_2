@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 using Lofelt.NiceVibrations;
 using Manager;
@@ -23,6 +24,7 @@ public class ConeCollider : MonoBehaviour {
         EventManager.instance.onEnemyHit += EnemyBeingHurt;
         bool hapticsSupported = DeviceCapabilities.isVersionSupported;
         StartCoroutine(DetectSound());
+        StartCoroutine(HandleEnemy());
     }
     [SerializeField] private AudioClip normalEnemyClip1;
     [SerializeField] private AudioClip shootToMoveEnemyClip1;
@@ -41,7 +43,98 @@ public class ConeCollider : MonoBehaviour {
     }
 
     public GameObject NormalEnemyUI;
+    public Image      NormalEnemyUIImage; // Assign this in the Unity editor
+
     public GameObject StaticEnemyUI;
+    public Image ShootToMoveEnemyUIImage;
+    public GameObject ShootToMoveEnemyUI;
+    public bool isLevel4 = false;
+    public float uiDisplayProbability = 0.5f;
+
+    private IEnumerator HandleEnemy()
+    {
+        float       angleToObject = 180;
+        List<Enemy> enemies       = new List<Enemy>();
+        while (true)
+        {
+            Collider[] hits = Physics.OverlapSphere(transform.position, radius, enemyLayerMask);
+            NormalEnemyUI.SetActive(false);
+            StaticEnemyUI.SetActive(false);
+            ShootToMoveEnemyUI.SetActive(false);
+            foreach (Collider hit in hits)
+            {
+                Enemy enemy = enemies.Find(e => e.collider == hit);
+                if (enemy == null)
+                {
+                    enemy = new Enemy(hit);
+                    enemies.Add(enemy);
+                }
+
+                Vector3 direction        = hit.transform.position - transform.position;
+                float   distanceToObject = direction.magnitude;
+                direction     = direction.normalized;
+                angleToObject = Vector3.Angle(transform.forward, direction);
+                if (hit.CompareTag("Heart"))
+                {
+                    if (angleToObject <= FastAngle)
+                    {
+                        // Debug.Log("Object detected! Distance: " + distanceToObject + " Angle: " + angleToObject);
+                        float volume = 1 - 0.01f;
+                        // Debug.Log(volume);
+                        SoundManager.instance.PlayEnemySound(_keepClip, volume);
+                    }
+                    else if (angleToObject >= FastAngle && angleToObject <= SlowAngle)
+                    {
+                        // Debug.Log("Object detected! Distance: " + distanceToObject + " Angle: " + angleToObject);
+                        float volume = Mathf.InverseLerp(radius, 0, distanceToObject);
+                        // Debug.Log(volume);
+                        SoundManager.instance.PlayEnemySound(_radarClip, volume);
+                    }
+                }
+
+                if (hit.CompareTag("Enemy"))
+                {
+                    if (angleToObject <= (FastAngle + 25) && !isLevel4)
+                    {
+                        float transparency = 0.9f - angleToObject / (FastAngle + 15);
+                        Color imageColor   = NormalEnemyUIImage.color;
+                        imageColor.a = transparency;
+                            if (hit.name == "NormalEnemy(Clone)") // Add this line
+                            {
+                                NormalEnemyUI.SetActive(true);
+
+                                NormalEnemyUIImage.color = imageColor;
+                            }
+                            else if (hit.name == "StaticEnemy(Clone)")
+                            {
+                                StaticEnemyUI.SetActive(true);
+                                // float transparency = 0.8f - angleToObject / (FastAngle + 15);
+                                // Color imageColor   = NormalEnemyUIImage.color;
+                                // imageColor.a             = transparency;
+                                ShootToMoveEnemyUIImage.color = imageColor;
+                            }
+                            else if (hit.name == "ShootToMoveEnemy(Clone)")
+                            {
+                                ShootToMoveEnemyUI.SetActive(true);
+                                ShootToMoveEnemyUIImage.color = imageColor;
+
+
+                            }
+
+                    }
+                    else
+                    {
+                        enemy.isSoundPlayed = false;
+
+                    }
+                }
+            }
+            yield return new WaitForSeconds(0.2f);
+
+        }
+
+    }
+
     IEnumerator DetectSound() {
         float       volume        = 0;
         float       angleToObject = 180;
@@ -49,108 +142,87 @@ public class ConeCollider : MonoBehaviour {
         List<Enemy> enemies       = new List<Enemy>();
         while(true){
             Collider[] hits = Physics.OverlapSphere(transform.position, radius, enemyLayerMask);
-
-
+            NormalEnemyUI.SetActive(false);
+            StaticEnemyUI.SetActive(false);
+            ShootToMoveEnemyUI.SetActive(false);
             foreach (Collider hit in hits)
             {
-                    Enemy enemy = enemies.Find(e => e.collider == hit);
-                    if (enemy == null)
+                Enemy enemy = enemies.Find(e => e.collider == hit);
+                if (enemy == null)
+                {
+                   enemy = new Enemy(hit);
+                   enemies.Add(enemy);
+                }
+                Vector3 direction        = hit.transform.position - transform.position;
+                float   distanceToObject = direction.magnitude;
+                direction     = direction.normalized;
+                angleToObject = Vector3.Angle(transform.forward, direction);
+                if (hit.CompareTag("Heart"))
+                {
+                    if (angleToObject <= FastAngle)
                     {
-                       enemy = new Enemy(hit);
-                       enemies.Add(enemy);
-                     }
-                    Vector3 direction        = hit.transform.position - transform.position;
-                    float   distanceToObject = direction.magnitude;
-                    direction     = direction.normalized;
-                    angleToObject = Vector3.Angle(transform.forward, direction);
-                    if (hit.CompareTag("Heart"))
-                    {
-                        if (angleToObject <= FastAngle)
-                        {
-                            // Debug.Log("Object detected! Distance: " + distanceToObject + " Angle: " + angleToObject);
-                            volume   = 1 - 0.01f;
-                            waitTime = 0f;
-                            // Debug.Log(volume);
-                            SoundManager.instance.PlayEnemySound(_keepClip, volume);
-                        }
-                        else if (angleToObject >= FastAngle && angleToObject <= SlowAngle)
-                        {
-                            // Debug.Log("Object detected! Distance: " + distanceToObject + " Angle: " + angleToObject);
-                            volume   = Mathf.InverseLerp(radius, 0, distanceToObject);
-                            waitTime = angleToObject / SlowAngle;
-                            // Debug.Log(volume);
-                            SoundManager.instance.PlayEnemySound(_radarClip, volume);
-
-                        }
+                        // Debug.Log("Object detected! Distance: " + distanceToObject + " Angle: " + angleToObject);
+                        volume   = 1 - 0.01f;
+                        waitTime = 0f;
+                        // Debug.Log(volume);
+                        SoundManager.instance.PlayEnemySound(_keepClip, volume);
                     }
-
-                    if (hit.CompareTag("Enemy"))
+                    else if (angleToObject >= FastAngle && angleToObject <= SlowAngle)
                     {
-                        if (angleToObject <= SlowAngle)
-                        {
-                            // Debug.Log("Object detected! Distance: " + distanceToObject + " Angle: " + angleToObject);
-                            volume   = 1 - 0.01f;
-                            waitTime = angleToObject / SlowAngle;
-                            Debug.Log(volume);
-                            // SoundManager.instance.PlaySound(_keepClip, volume);
-                            sonar.StartSonar();
-                            HapticPatterns.PlayEmphasis(volume, 0.0f); // SoundManager.instance.PlaySound(_radarClip, volume);
-
-                        }
-                        if (angleToObject<=FastAngle)
-                        {
-                            if (hit.name == "NormalEnemy(Clone)") // Add this line
-                            {
-                                NormalEnemyUI.SetActive(true);
-                                StaticEnemyUI.SetActive(false);
-                            }
-                            else if(hit.name == "ShootToMoveEnemy(Clone)")
-                            {
-                                NormalEnemyUI.SetActive(false);
-                                StaticEnemyUI.SetActive(false);
-                            }
-                            else if(hit.name == "StatueEnemy(Clone)")
-                            {
-                                NormalEnemyUI.SetActive(false);
-                                StaticEnemyUI.SetActive(false);
-                            }
-                            else if(hit.name == "MusicEnemy(Clone)")
-                            {
-                                if (!enemy.isSoundPlayed)
-                                {
-                                    SoundManager.instance.PlayEnemySound(shootToMoveEnemyClip1, 1);
-                                    enemy.isSoundPlayed = true;
-                                }
-                                NormalEnemyUI.SetActive(false);
-                                StaticEnemyUI.SetActive(false);
-
-                            }
-                            else if (hit.name == "StaticEnemy(Clone)")
-                            {
-                                NormalEnemyUI.SetActive(false);
-                                StaticEnemyUI.SetActive(true);
-                            }
-                            else
-                            {
-                                enemy.isSoundPlayed = false;
-                                NormalEnemyUI.SetActive(false);
-                                StaticEnemyUI.SetActive(false);
-
-
-                            }
-                        }
-                        else
-                        {
-                            enemy.isSoundPlayed = false;
-                            NormalEnemyUI.SetActive(false);
-                            StaticEnemyUI.SetActive(false);
-                        }
+                        // Debug.Log("Object detected! Distance: " + distanceToObject + " Angle: " + angleToObject);
+                        volume   = Mathf.InverseLerp(radius, 0, distanceToObject);
+                        waitTime = angleToObject / SlowAngle;
+                        // Debug.Log(volume);
+                        SoundManager.instance.PlayEnemySound(_radarClip, volume);
 
                     }
+                }
 
+                if (hit.CompareTag("Enemy"))
+                {
+                    // if (angleToObject<=(FastAngle+15)&&!isLevel4)
+                    // {
+                    //     float randomValue = UnityEngine.Random.value; // 生成一个0到1之间的随机数
+                    //     if (randomValue <= uiDisplayProbability)
+                    //     {
+                    //         if (hit.name == "NormalEnemy(Clone)") // Add this line
+                    //         {
+                    //             NormalEnemyUI.SetActive(true);
+                    //             float transparency = 1 - angleToObject / (FastAngle+15);
+                    //             Color imageColor   = NormalEnemyUIImage.color;
+                    //             imageColor.a             = transparency;
+                    //             NormalEnemyUIImage.color = imageColor;
+                    //         }
+                    //         else if (hit.name == "StaticEnemy(Clone)")
+                    //         {
+                    //             StaticEnemyUI.SetActive(true);
+                    //         }
+                    //         else if (hit.name == "ShootToMoveEnemy(Clone)")
+                    //         {
+                    //             ShootToMoveEnemyUI.SetActive(true);
+                    //         }
+                    //     }
+                    // }
+                    // else
+                    // {
+                    //     enemy.isSoundPlayed = false;
+                    //
+                    // }
+                    if (angleToObject <= SlowAngle)
+                    {
+                        // Debug.Log("Object detected! Distance: " + distanceToObject + " Angle: " + angleToObject);
+                        volume   = 1 - 0.01f;
+                        waitTime = angleToObject / SlowAngle;
+                        Debug.Log(volume);
+                        // SoundManager.instance.PlaySound(_keepClip, volume);
+                        sonar.StartSonar();
+                        HapticPatterns.PlayEmphasis(volume, 0.0f); // SoundManager.instance.PlaySound(_radarClip, volume);
+
+
+                    }
+                }
             }
-
-            yield return new WaitForSeconds(waitTime);
+            yield return new WaitForSeconds(waitTime+0.15f);
         }
     }
 

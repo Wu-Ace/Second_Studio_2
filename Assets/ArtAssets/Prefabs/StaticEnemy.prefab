@@ -120,7 +120,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   speed: 1
-  DefeatedClip: {fileID: 8300000, guid: c22704a0b40f3224d93b53927f3785b9, type: 3}
+  DefeatedClip: {fileID: 8300000, guid: a891f12083f0c7f40acb5ab5e32f7cd5, type: 3}
   PlayerHurtClip: {fileID: 8300000, guid: 6c55a75f13eac644888223305b672113, type: 3}
   _enemyNearClip: {fileID: 8300000, guid: ab00be02cf8cb1042aa873ed9661baff, type: 3}
   _sfxSource: {fileID: 0}

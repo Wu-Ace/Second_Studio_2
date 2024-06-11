@@ -32,7 +32,7 @@ public class ShootToMoveEnemyController : MonoBehaviour
 
     }
     [SerializeField]private AudioClip defeatedClip;
-    [SerializeField] int health = 3;
+    [SerializeField] int health = 1;
     private void EnemyBeingHurt(GameObject enemy)
     {
         if (enemy == this.gameObject)
@@ -77,5 +77,6 @@ public class ShootToMoveEnemyController : MonoBehaviour
     {
         EventManager.instance.onEnemyHit -= EnemyBeingHurt;
         EventManager.instance.onPlayerShoot -= Move;
+        playerController.IncrementKillCount("ShootToMoveEnemy");
     }
 }

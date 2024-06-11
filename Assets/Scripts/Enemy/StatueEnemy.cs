@@ -85,5 +85,6 @@ public class StatueEnemy : MonoBehaviour
         {
             StopCoroutine(detectPlayerCoroutine);
         }
+        playerController.IncrementKillCount("StatueEnemy");
     }
 }

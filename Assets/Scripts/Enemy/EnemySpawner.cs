@@ -15,7 +15,7 @@ public class EnemySpawner : MonoBehaviour
     public  int          EnemyTrueMaxNumber;
 
 
-    private float nextSpawnTime = 0;
+    public float nextSpawnTime = 0;
 
     [SerializeField] private bool isCircle;
 
@@ -89,7 +89,7 @@ public class EnemySpawner : MonoBehaviour
     }
 
     public int StaticEnemyCount = 0;
-    public int StaticEnemyCountMax = 4;
+    public int StaticEnemyCountMax = 2;
     public IEnumerator SpawnStaticEnemy()
     {
         while (true)
@@ -104,7 +104,7 @@ public class EnemySpawner : MonoBehaviour
         }
     }
     public int enemyType1Count = 0;
-    public int enemyType1CountMax = 1;
+    public int enemyType1CountMax = 3;
     public IEnumerator SpawnNormalEnemy()
     {
         while (true)

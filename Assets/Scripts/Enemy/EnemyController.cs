@@ -54,7 +54,7 @@ public class EnemyController : MonoBehaviour
         if (enemy == this.gameObject)
         {
             PlayerController.PlayerKillEnemyNum++;
-            SoundManager.instance.PlayEnemySound(DefeatedClip, 0.5f);
+            SoundManager.instance.PlayEnemySound(DefeatedClip, 1f);
             Debug.Log("EnemyController:EnemyBeingHurt");
             Debug.Log("Enemy is being hurt");
             EnemySpawner.EnemyNumber--;
@@ -78,9 +78,11 @@ public class EnemyController : MonoBehaviour
     private void OnDestroy()
     {
         EventManager.instance.onEnemyHit -= EnemyBeingHurt;
+        PlayerController.IncrementKillCount("NormalEnemy");
         if (_detectPlayerCoroutine != null)
         {
             StopCoroutine(_detectPlayerCoroutine);
+
         }
     }
 }

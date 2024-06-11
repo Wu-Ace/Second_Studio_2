@@ -57,6 +57,7 @@ public class StaticEnemyController : MonoBehaviour
             Debug.Log("EnemyController:EnemyBeingHurt");
             Debug.Log("Enemy is being hurt");
             EnemySpawner.EnemyNumber--;
+            StartCoroutine(PlayEnemyHurtSound());
             Destroy(this.gameObject);
         }
     }
@@ -87,5 +88,9 @@ public class StaticEnemyController : MonoBehaviour
         {
             StopCoroutine(_detectPlayerCoroutine);
         }
+        PlayerController.IncrementKillCount("StaticEnemy");
+        StartCoroutine(PlayEnemyHurtSound());
+        SoundManager.instance.PlayEnemySound(DefeatedClip, 0.5f);
+
     }
 }

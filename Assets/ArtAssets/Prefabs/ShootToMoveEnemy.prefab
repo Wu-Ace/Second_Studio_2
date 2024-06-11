@@ -98,8 +98,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 0}
-  defeatedClip: {fileID: 8300000, guid: c22704a0b40f3224d93b53927f3785b9, type: 3}
-  health: 3
+  defeatedClip: {fileID: 8300000, guid: a891f12083f0c7f40acb5ab5e32f7cd5, type: 3}
+  health: 1
   moveDistance: 5
   moveClip: {fileID: 8300000, guid: a4171fde55e85e74da1c46296256f0d2, type: 3}
 --- !u!65 &2950458903468398888
